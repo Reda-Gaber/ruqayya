@@ -1,0 +1,106 @@
+
+<!-- HEADER -->
+<header class="header" id="header">
+    <div class="container">
+        <nav class="nav">
+            <!-- Logo -->
+            <a href="/" class="nav__logo">
+                <!-- <img src="/images/logo.png" alt="شعار الشركة" class="nav__logo-img"> -->
+                <span class="nav__logo-text">اليامي</span>
+            </a>
+
+            <!-- Desktop Social Icons -->
+            <!-- <div class="nav__social">
+                <a href="https://facebook.com/yourpage" target="_blank" aria-label="فيسبوك">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://instagram.com/yourpage" target="_blank" aria-label="إنستجرام">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/20123456789" target="_blank" aria-label="واتساب">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://x.com/yourpage" target="_blank" aria-label="تويتر X">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="https://tiktok.com/@yourpage" target="_blank" aria-label="تيك توك">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://youtube.com/@yourchannel" target="_blank" aria-label="يوتيوب">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div> -->
+
+            <!-- Mobile Toggle -->
+            <button class="nav__toggle" id="navToggle" aria-label="فتح/إغلاق القائمة">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Menu -->
+            <ul class="nav__menu" id="navMenu">
+                <li><a href="/" class="nav__link">الرئيسية</a></li>
+                <li><a href="/news" class="nav__link">الأخبار</a></li>
+                <li><a href="/sales" class="nav__link">الخدمات</a></li>
+                <li><a href="/construction" class="nav__link">مقاولات إنشائية</a></li>
+                <li><a href="/decor" class="nav__link">ديكورات</a></li>
+                <li><a href="/about" class="nav__link">من نحن</a></li>
+                <li>
+                    <a href="/contact" class="nav__link btn-contact">
+                        <span>اتصل بنا</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </a>
+                </li>
+
+                <!-- Mobile Social Icons (تظهر فقط على الموبايل) -->
+                <div class="nav__social-mobile">
+                    <a href="https://facebook.com/yourpage" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://instagram.com/yourpage" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/20123456789" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://x.com/yourpage" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://tiktok.com/@yourpage" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://youtube.com/@yourchannel" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<script>
+    
+document.addEventListener("DOMContentLoaded", function () {
+    const header = document.getElementById("header");
+    const navToggle = document.getElementById("navToggle");
+    const navMenu = document.getElementById("navMenu");
+
+    // Scroll effect
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 100) {
+            header.classList.add("scrolled");
+        } else {
+            header.classList.remove("scrolled");
+        }
+    });
+
+
+    // Mobile menu toggle
+    // navToggle.addEventListener("click", () => {
+    //     navToggle.classList.toggle("active");
+    //     navMenu.classList.toggle("active");
+    //     console.log("clicked")
+    // });
+
+    // إغلاق القائمة عند الضغط على رابط
+    document.querySelectorAll(".nav__link").forEach(link => {
+        link.addEventListener("click", () => {
+            navToggle.classList.remove("active");
+            navMenu.classList.remove("active");
+        });
+    });
+});
+
+</script>

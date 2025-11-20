@@ -1,0 +1,103 @@
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+
+            <!-- اللوجو + الوصف -->
+            <div class="footer-about">
+                <a href="/" class="footer-logo">
+                    <img src="/images/logo.png" alt="مؤسسة رقية الي اليامي" class="footer-logo-img">
+                    <span class="footer-logo-text">مؤسسة رقية اليامي</span>
+                </a>
+                <p class="footer-desc">
+                    نبني المستقبل بخبرة الماضي وتقنيات الحاضر.<br>
+                    متخصصون في المقاولات الإنشائية والديكورات الفاخرة بأعلى معايير الجودة السعودية.
+                </p>
+
+                <div class="footer-social">
+                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/966501234567" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <!-- روابط سريعة -->
+            <div class="footer-links">
+                <h5>روابط سريعة</h5>
+                <ul>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/about">من نحن</a></li>
+                    <li><a href="/construction">مقاولات إنشائية</a></li>
+                    <li><a href="/decor">ديكورات داخلية</a></li>
+                    <li><a href="/sales">المبيعات</a></li>
+                    <li><a href="/news">الأخبار</a></li>
+                    <li><a href="/contact">اتصل بنا</a></li>
+                </ul>
+            </div>
+
+            <!-- تواصل معنا -->
+            <div class="footer-contact">
+                <h5>تواصل معنا</h5>
+                <ul>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <a href="tel:+966501234567">+966 50 123 4567</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <a href="mailto:info@roqaya-alyami.sa">info@roqaya-alyami.sa</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            الرياض، حي الملقا<br>
+                            المملكة العربية السعودية
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="currentYear"></span> مؤسسة رقية اليامي للمقاولات والديكورات. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- زر العودة للأعلى (دلوقتي بيظهر بقوة) -->
+<button class="scroll-top" id="scrollTop" aria-label="العودة للأعلى">
+    <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.5" fill="none">
+        <path d="M12 5l-8 8h5v8h6v-8h5z"/>
+    </svg>
+</button>
+
+
+<script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    
+    const scrollTopBtn = document.getElementById('scrollTop');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollTopBtn.classList.add('show');
+        } else {
+            scrollTopBtn.classList.remove('show');
+        }
+    });
+    
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+
+<script src="/js/main.js"></script>
+<script src="/js/news-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<%- include("parts/head.ejs") %>
+<%- include("parts/header.ejs") %>
+
+<section class="page-header">
+        <div class="container">
+            <h1>اتصل بنا</h1>
+            <p>نحن هنا للإجابة على استفساراتكم ومساعدتكم في تحقيق مشاريعكم</p>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>معلومات التواصل</h2>
+                    <p>تواصل معنا عبر أي من الوسائل التالية، وسنكون سعداء بخدمتك</p>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-details">
+                            <h4>الهاتف</h4>
+                            <p>+966 50 123 4567</p>
+                            <p>+966 11 234 5678</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div class="contact-details">
+                            <h4>البريد الإلكتروني</h4>
+                            <p>info@roqaya-alyami.sa</p>
+                            <p>projects@roqaya-alyami.sa</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h4>العنوان</h4>
+                            <p>الرياض، حي الملقا</p>
+                            <p>طريق الملك فهد</p>
+                            <p>المملكة العربية السعودية</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">⏰</div>
+                        <div class="contact-details">
+                            <h4>ساعات العمل</h4>
+                            <p>السبت - الخميس: 8:00 ص - 5:00 م</p>
+                            <p>الجمعة: مغلق</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-container">
+                    <h2>أرسل لنا رسالة</h2>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">الاسم الكامل <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" required>
+                            <span class="error-message" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">البريد الإلكتروني <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">رقم الهاتف <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required>
+                            <span class="error-message" id="phoneError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">الموضوع <span class="required">*</span></label>
+                            <select id="subject" name="subject" required>
+                                <option value="">اختر الموضوع</option>
+                                <option value="استفسار عام">استفسار عام</option>
+                                <option value="طلب عرض سعر">طلب عرض سعر</option>
+                                <option value="مشروع جديد">مشروع جديد</option>
+                                <option value="خدمات المقاولات">خدمات المقاولات</option>
+                                <option value="خدمات الديكور">خدمات الديكور</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                            <span class="error-message" id="subjectError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">الرسالة <span class="required">*</span></label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                            <span class="error-message" id="messageError"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">إرسال الرسالة</button>
+                        <div class="form-success" id="formSuccess">تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="map-section">
+        <div class="container">
+            <h2>موقعنا على الخريطة</h2>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3623.732788!2d46.674!3d24.737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQ0JzEzLjIiTiA0NsKwNDAnMjYuNCJF!5e0!3m2!1sen!2ssa!4v1234567890" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
+
+<%- include("parts/footer.ejs") %>

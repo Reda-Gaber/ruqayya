@@ -1,0 +1,181 @@
+<%- include("parts/head.ejs") %>
+<%- include("parts/header.ejs") %>
+   <!-- HERO SECTION WITH SLIDER -->
+    <section class="hero">
+        <div class="hero-slider" id="heroSlider">
+            <!-- Slide 1 -->
+            <div class="slide active">
+                <!-- <img src="https://images.pexels.com/photos/53610/large-home-residential-house-architecture-53610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="فيلا فخمة من تنفيذ مؤسسة رقية اليامي"> -->
+                <img src="/images/slide-1.jpg" alt="">
+                <div class="slide-content container">
+                    <h1>رقية اليامي للمقاولات</h1>
+                    <p>مؤسسة رقية اليامي للمقاولات تقدم خدمات المقاولات الإنشائية والديكورات الداخلية بأعلى جودة</p>
+                    <a href="pages/contact.html" class="btn btn-primary">تواصل معنا الآن</a>
+                </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="slide">
+                <!-- <img src="https://images.pexels.com/photos/221540/pexels-photo-221540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="ديكورات داخلية عصرية"> -->
+                <img src="/images/slide-2.jpg" alt="">
+                <div class="slide-content container">
+                    <h1>رقية اليامي للمقاولات</h1>
+                    <p>نحول أفكارك إلى واقع بأحدث التصاميم والتشطيبات الفاخرة</p>
+                    <a href="pages/decor.html" class="btn btn-primary">شاهد أعمال الديكور</a>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="slide">
+                <!-- <img src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="مبنى تجاري فاخر"> -->
+                <img src="/images/slide-3.jpg" alt="">
+                <div class="slide-content container">
+                    <h1>رقية اليامي للمقاولات</h1>
+                    <p>التزام بالمواعيد والدقة في التنفيذ مع فريق من المهندسين المحترفين</p>
+                    <a href="pages/construction.html" class="btn btn-primary">تعرف على خدماتنا</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slider Controls -->
+        <button class="slider-control prev" id="prevBtn">❮</button>
+        <button class="slider-control next" id="nextBtn">❯</button>
+
+        <!-- Slider Dots -->
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services services-1">
+        <div class="container">
+            <h2>خدماتنا</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="/images/slide-1.jpg" style="width: 300px; height: 200px;" alt="">
+                    <!-- <i class="fas fa-building service-icon" style="color: var(--color-sky-blue);"></i> -->
+                    <h3>المقاولات الإنشائية</h3>
+                    <p>تنفيذ المباني من الأساسات حتى التشطيب النهائي بأعلى معايير الجودة والسلامة.</p>
+                </div>
+                <div class="service-card">
+                    <img src="/images/slide-2.jpg" style="width: 300px; height: 200px;" alt="">
+                    <!-- <i class="fas fa-paint-roller service-icon" style="color: var(--color-gold);"></i> -->
+                    <h3>الديكورات الداخلية</h3>
+                    <p>تصميم وتنفيذ الديكورات الداخلية بأحدث التصاميم العصرية والكلاسيكية.</p>
+                </div>
+                <div class="service-card">
+                    <img src="/images/slide-3.jpg" style="width: 300px; height: 200px;" alt="">
+                    <!-- <i class="fas fa-tags service-icon" style="color: var(--color-sky-blue);"></i> -->
+                    <h3>المبيعات والعروض</h3>
+                    <p>عروض خاصة وخدمات متميزة للعملاء لتلبية جميع احتياجاتهم بأفضل الأسعار.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+<!-- PROJECTS GALLERY -->
+<section class="projects">
+    <div class="container">
+        <div class="section-header">
+            <h2>معرض المشاريع</h2>
+            <p>نفخر بتنفيذ مشاريعنا بأعلى معايير الجودة والدقة في المواعيد</p>
+        </div>
+
+        <!-- أزرار التصفية (اختياري - لو حابة تضيفيها بعدين) -->
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">الكل</button>
+            <button class="filter-btn" data-filter="residential">سكني</button>
+            <button class="filter-btn" data-filter="commercial">تجاري</button>
+            <button class="filter-btn" data-filter="industrial">صناعي</button>
+        </div>
+       
+
+        <div class="projects-grid" id="projectsGallery">
+            <!-- مشروع 1 -->
+            <div class="project-card" data-category="residential">
+                <div class="project-image">
+                    <img src="/images/project-6.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="فيلا سكنية فاخرة - الرياض" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>فيلا سكنية حديثة</h3>
+                    <p>مساحة ٨٥٠ م² • حي الملقا • الرياض</p>
+                </div>
+            </div>
+
+            <!-- مشروع 2 -->
+            <div class="project-card" data-category="commercial">
+                <div class="project-image">
+                    <img src="/images/project-2.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="مبنى تجاري متعدد الطوابق" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>مبنى تجاري متعدد الطوابق</h3>
+                    <p>١٢ دور • وسط المدينة • الرياض</p>
+                </div>
+            </div>
+
+            <!-- مشروع 3 -->
+            <div class="project-card" data-category="industrial">
+                <div class="project-image">
+                    <img src="/images/project-3.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/1089842/pexels-photo-1089842.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="مصنع صناعي متكامل" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>مصنع صناعي متكامل</h3>
+                    <p>مساحة ٥٠٠٠ م² • المنطقة الصناعية الثانية</p>
+                </div>
+            </div>
+
+            <!-- يمكنك إضافة المزيد من المشاريع بنفس الطريقة -->
+            <div class="project-card" data-category="residential">
+                <div class="project-image">
+                    <img src="/images/project-4.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="مجمع سكني فاخر" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>مجمع سكني فاخر</h3>
+                    <p>٢٥ فيلا • حي النرجس • الرياض</p>
+                </div>
+            </div>
+
+            <div class="project-card" data-category="commercial">
+                <div class="project-image">
+                    <img src="/images/project-5.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="مركز تسوق" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>مركز تسوق وترفيه</h3>
+                    <p>مساحة ١٥٠٠٠ م² • طريق الملك فهد</p>
+                </div>
+            </div>
+
+            <div class="project-card" data-category="residential">
+                <div class="project-image">
+                    <img src="/images/project-1.jpeg" alt="">
+                    <!-- <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800"  -->
+                         alt="منزل عائلي عصري" loading="lazy">
+                </div>
+                <div class="project-content">
+                    <h3>منزل عائلي عصري</h3>
+                    <p>مساحة ٦٥٠ م² • حي الروضة • جدة</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- CTA SECTION -->
+    <!-- <section class="cta">
+        <div class="container">
+            <h2>هل لديك مشروع في بالك؟</h2>
+            <p>تواصلي معنا الآن للحصول على استشارة مجانية وعرض سعر مخصص خلال 24 ساعة</p>
+            <a href="pages/contact.html" class="btn btn-primary">احجز استشارتك المجانية</a>
+        </div>
+    </section> -->
+
+    <%- include("parts/footer.ejs") %>
