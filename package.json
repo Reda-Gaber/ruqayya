@@ -13,7 +13,7 @@
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
     "mongodb": "^7.0.0",
-    "connect-mongo": "^5.2.0",
+    "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
@@ -23,5 +23,10 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.11"
+  },
+  "overrides": {
+    "connect-mongo": {
+      "mongodb": "$mongodb"
+    }
   }
 }
