@@ -1,0 +1,360 @@
+<%- include("parts/head.ejs") %>
+<%- include("parts/header.ejs") %>
+<style>
+  body { 
+    font-family: 'Cairo', sans-serif; 
+    background: #f8f9fa; 
+    direction: rtl;
+    text-align: right;
+  }
+  .project-header {
+    margin-top: 150px;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<%= project?.mainImage || "/images/placeholder.jpg" %>');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 120px 0 80px;
+    text-align: center;
+    position: relative;
+    border-radius: 30px ;
+  }
+  .project-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    border-radius: inherit;
+  }
+  .project-header > * {
+    position: relative;
+    z-index: 1;
+  }
+  .project-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  .project-description {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .gallery-section, .stages-section {
+    padding: 60px 0;
+  }
+  .gallery-img {
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .gallery-img:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+  }
+  .stage-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.4s ease;
+    background: white;
+    border: 1px solid rgba(102,126,234,0.1);
+  }
+  .stage-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  }
+  .stage-img {
+    height: 220px;
+    object-fit: cover;
+    width: 100%;
+  }
+  .stage-number {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+    z-index: 2;
+  }
+  .stage-content {
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .stage-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .stage-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .breadcrumb {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+  }
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: " > ";
+    color: #6c757d;
+  }
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 1rem auto 0;
+    border-radius: 2px;
+  }
+  .no-content {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+  }
+  @media (max-width: 768px) {
+    .project-header { padding: 80px 0 60px; }
+    .project-title { font-size: 2rem; }
+    .project-description { font-size: 1rem; padding: 0 1rem; }
+    .gallery-img, .stage-img { height: 200px; }
+    .section-title { font-size: 2rem; }
+    .gallery-section, .stages-section { padding: 40px 0; }
+  }
+  @media (max-width: 576px) {
+    .gallery-img, .stage-img { height: 180px; }
+    .breadcrumb { padding: 0.75rem 1rem; }
+  }
+  /* ===== تحسين عرض مراحل التنفيذ ===== */
+
+.stages-section {
+  padding: 70px 0;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 2.5rem;
+}
+
+.stage-card {
+  margin-top: 25px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  transition: 0.3s ease;
+}
+
+.stage-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* صورة المرحلة */
+.stage-img {
+  height: 640px;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* رقم المرحلة */
+.stage-number {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* نص المرحلة */
+.stage-content {
+  padding: 1.4rem;
+  text-align: right;
+}
+
+.stage-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.stage-desc {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ===== Responsive تحسين ===== */
+
+@media (max-width: 768px) {
+  .stage-img {
+    height: 200px;
+  }
+  .stage-title {
+    font-size: 1.1rem;
+  }
+  .stage-desc {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .stage-img {
+    height: 180px;
+  }
+  .stage-number {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+  }
+}
+
+</style>
+
+
+
+
+
+<div class="container my-5">
+
+  <!-- Breadcrumb
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+      <li class="breadcrumb-item"><a href="/projects">المشاريع</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= project?.title?.substring(0,30) || '...' %>...</li>
+    </ol>
+  </nav> -->
+
+  <!-- ====== عرض الصورة الرئيسية + تفاصيل المشروع ====== -->
+<section class="project-header">
+  <h1 class="project-title"><%= project.title %></h1>
+  <p class="project-description"><%= project.description || '' %></p>
+  <p class="project-description">
+    <%= new Date(project.createdAt).toLocaleDateString('ar-EG', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) %>
+  </p>
+
+</section>
+
+
+  <% if (!project) { %>
+    <div class="no-content">
+      <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
+      <h2 class="text-muted mb-3">عذراً، هذا المشروع غير موجود</h2>
+      <p class="text-secondary mb-4">يرجى العودة إلى قائمة المشاريع لاستعراض الخيارات المتاحة.</p>
+      <a href="/projects" class="btn btn-primary">العودة للمشاريع</a>
+    </div>
+  <% } else { %>
+
+    <!-- مراحل التنفيذ -->
+    <% if (project.stages && project.stages.length > 0) { %>
+      <section class="stages-section">
+        <h2 class="section-title">
+          <i class="fas fa-tasks me-2 text-primary"></i> مراحل التنفيذ
+        </h2>
+        <div class="row g-4">
+          <% project.stages.forEach((stage, i) => { %>
+            <div class="col-md-6 col-lg-4">
+              <div class="stage-card h-100 position-relative">
+                <div class="stage-number"><%= i + 1 %></div>
+                <img src="<%= stage.image %>" class="stage-img" alt="<%= stage.name || `مرحلة ${i + 1}` %>">
+                <div class="stage-content">
+                  <h5 class="stage-title"><%= stage.name || `مرحلة ${i + 1}` %></h5>
+                  <% if (stage.description) { %>
+                    <p class="stage-desc mb-0"><%= stage.description %></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    <% } else { %>
+      <div class="no-content">
+        <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+        <h4 class="text-muted">لا توجد مراحل محددة لهذا المشروع حالياً</h4>
+        <p class="text-secondary">سنقوم بتحديث هذا القسم قريباً مع تفاصيل إضافية.</p>
+      </div>
+    <% } %>
+
+    <!-- معرض الصور العامة -->
+    <!-- <% if (project.images && project.images.length > 0) { %>
+
+      <section class="gallery-section">
+        <h2 class="section-title">
+          <i class="fas fa-images me-2 text-primary"></i> معرض الصور
+        </h2>
+        <div class="row g-4">
+          <% project.images.forEach((img, index) => { %>
+            <div class="col-6 col-md-4 col-lg-3">
+              <a href="<%= img %>" data-lightbox="project-gallery" data-title="صورة <%= index + 1 %> من المشروع">
+                <img src="<%= img %>" class="gallery-img w-100" alt="صورة <%= index + 1 %> للمشروع <%= project.title %>" loading="lazy">
+              </a>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    <% } %> -->
+
+  <% } %>
+</div>
+
+<%- include("parts/footer.ejs") %>
