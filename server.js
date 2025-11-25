@@ -176,7 +176,10 @@ app.get("/api/test", async (req, res) => {
 });
 
 // ------------------- Start Server -------------------
-app.listen(PORT, () => {
-  console.log(`Server running → http://localhost:${PORT}`);
-  console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running → http://localhost:${PORT}`);
+//   console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
+// });
+
+// server.js (أو app.js)
+module.exports = app;   // ← مهم جدًا
