@@ -57,6 +57,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Handle OPTIONS requests for CORS
+app.options('*', cors());
+
+// Global error handler (Express بيبتلع errors، ده بيحلّها)
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).json({ success: false, message: 'Internal Server Error' });
+});
+
 app.use(cookieParser());
 
 app.use(
