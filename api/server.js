@@ -1,17 +1,21 @@
-// api/server.js - Vercel Serverless Handler for Express App
+/**
+ * Vercel Serverless Handler
+ * This is the entry point for Vercel serverless functions
+ * 
+ * IMPORTANT: Make sure these environment variables are set in Vercel Dashboard:
+ * - MONGODB_URI
+ * - SESSION_SECRET
+ * - CLOUDINARY_CLOUD_NAME (optional)
+ * - CLOUDINARY_API_KEY (optional)
+ * - CLOUDINARY_API_SECRET (optional)
+ */
 const serverless = require('serverless-http');
-const app = require('../server'); // يشير لـ server.js في الـ root
+const app = require('../server');
 
-// Wrap the Express app with serverless-http
+// Create serverless handler
 const handler = serverless(app, {
-  // Optional: Custom options (مش ضروري دلوقتي)
-  // binary: ['*/*'], // لو عايزة تدعمي binary files زي images
-  request: (req, event, context) => {
-    // يمكن تضيفي custom logic هنا لو لزم الأمر (مثل logging)
-    // console.log('Incoming request:', req.method, req.url);
-  },
+  binary: ['image/*', 'application/pdf', 'application/zip', 'application/octet-stream']
 });
 
-// Export the handler
+// Export for Vercel - Vercel looks for a default export
 module.exports = handler;
-// أو module.exports.handler = handler; لو حابة

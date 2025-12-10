@@ -57,15 +57,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Handle OPTIONS requests for CORS
-app.options('*', cors());
-
-// Global error handler (Express بيبتلع errors، ده بيحلّها)
-app.use((err, req, res, next) => {
-  console.error('Server Error:', err);
-  res.status(500).json({ success: false, message: 'Internal Server Error' });
-});
-
 app.use(cookieParser());
 
 app.use(
@@ -107,15 +98,25 @@ app.use(express.static(path.join(__dirname, "images"), {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Database connection - In serverless, connections are reused across invocations
-// Don't exit process in serverless environment
-dbConnect().catch((err) => {
-  console.error("فشل الاتصال بـ MongoDB:", err.message);
-  // Only exit in non-serverless environments
-  if (require.main === module) {
-    process.exit(1);
+// Database connection - Connect asynchronously without blocking server startup
+// This allows the server to start even if MongoDB connection is slow or fails initially
+(async () => {
+  try {
+    await dbConnect();
+    console.log("✓ MongoDB connection ready");
+  } catch (err) {
+    console.error("⚠ فشل الاتصال بـ MongoDB:", err.message);
+    console.error("⚠ تحقق من:");
+    console.error("  1. MONGODB_URI موجود في .env أو Vercel environment variables");
+    console.error("  2. MongoDB Atlas cluster يعمل");
+    console.error("  3. Network Access في MongoDB Atlas يسمح لـ IP الخاص بك");
+    console.error("     → اذهب إلى Network Access → Add IP Address → 0.0.0.0/0 (للاختبار)");
+    console.error("  4. Database User credentials صحيحة في MONGODB_URI");
+    console.error("  5. Connection string format صحيح");
+    // Don't exit - let the server run and retry on first request
+    console.error("⚠ السيرفر سيعمل لكن قد تفشل الطلبات التي تحتاج قاعدة البيانات");
   }
-});
+})();
 
 app.use(async (req, res, next) => {
   try {
