@@ -416,17 +416,16 @@ app.delete("/admin/api/news/:id", async (req, res) => {
   }
 });
 
-// Export app for serverless compatibility (Vercel)
-// The app.listen() only runs when executed directly (local development)
-// On Vercel, the serverless handler in api/server.js will use this exported app
-// if (require.main === module) {
-//   const PORT = process.env.PORT || 3003;
-//   app.listen(PORT, () => {
-//     console.log(`Server running → http://localhost:${PORT}`);
-//     console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
-//     console.log(`Construction Page → http://localhost:${PORT}/construction`);
-//     console.log(`All Projects → http://localhost:${PORT}/projects`);
-//   });
-// }
+// Run server only when executed directly (local development)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3003;
+  app.listen(PORT, () => {
+    console.log(`Server running → http://localhost:${PORT}`);
+    console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
+    console.log(`All Projects → http://localhost:${PORT}/projects`);
+    console.log(`News → http://localhost:${PORT}/news`);
+  });
+}
 
+// Export for Vercel serverless
 module.exports = app;
