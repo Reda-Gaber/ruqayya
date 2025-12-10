@@ -3,7 +3,7 @@ const router = express.Router();
 const Project = require("../../models/projects.model");
 
 // جلب كل المشاريع (للصفحة الرئيسية)
-router.get("/", async (req, res) => {
+router.get("/projects", async (req, res) => {
   try {
     const projects = await Project.find()
       .sort({ createdAt: -1 })

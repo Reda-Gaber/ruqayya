@@ -19,8 +19,14 @@
                         <div class="contact-icon">📞</div>
                         <div class="contact-details">
                             <h4>الهاتف</h4>
-                            <p>+966 50 123 4567</p>
-                            <p>+966 11 234 5678</p>
+                            <% if (settings && settings.phones && settings.phones.length > 0) { %>
+                                <% settings.phones.forEach(function(phone) { %>
+                                    <p><a href="tel:+966<%= phone.replace(/^0/, '') %>"><%= phone %></a></p>
+                                <% }); %>
+                            <% } else { %>
+                                <p><a href="tel:+966503119104">0503119104</a></p>
+                                <p><a href="tel:+966560864811">0560864811</a></p>
+                            <% } %>
                         </div>
                     </div>
 
@@ -37,8 +43,7 @@
                         <div class="contact-icon">📍</div>
                         <div class="contact-details">
                             <h4>العنوان</h4>
-                            <p>الرياض، حي الملقا</p>
-                            <p>طريق الملك فهد</p>
+                            <p>نجران رجلاء حي فواز</p>
                             <p>المملكة العربية السعودية</p>
                         </div>
                     </div>

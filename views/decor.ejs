@@ -1,10 +1,13 @@
-<%- include("parts/head.ejs") %> <%- include("parts/header.ejs") %>
+<%- include("parts/head.ejs") %>
+<%- include("parts/header.ejs") %>
+
 <section class="page-header">
   <div class="container">
     <h1>الديكورات الداخلية</h1>
     <p>تصاميم داخلية فريدة تعكس ذوقك الراقي</p>
   </div>
 </section>
+
 <section class="service-intro">
   <div class="container">
     <div class="service-content">
@@ -30,6 +33,7 @@
     </div>
   </div>
 </section>
+
 <section class="construction-services">
   <div class="container">
     <div class="section-header">
@@ -64,106 +68,54 @@
     </div>
   </div>
 </section>
+
+<!-- معرض المشاريع الديناميكي (نفس التصميم القديم بالظبط) -->
 <section class="projects-gallery">
   <div class="container">
     <div class="section-header">
       <h2>معرض أعمال الديكور</h2>
       <p>شاهد بعضاً من تصاميمنا الداخلية المميزة</p>
     </div>
-    <div class="filter-buttons">
-      <button class="filter-btn active" data-filter="all">الكل</button
-      ><button class="filter-btn" data-filter="living">صالات</button
-      ><button class="filter-btn" data-filter="bedroom">غرف نوم</button
-      ><button class="filter-btn" data-filter="kitchen">مطابخ</button>
-    </div>
+
+    <!-- أزرار الفلتر (اختياري، لو عايز تضيفه بعدين) -->
+    <!-- <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">الكل</button>
+      <button class="filter-btn" data-filter="living">صالات</button>
+      <button class="filter-btn" data-filter="bedroom">غرف نوم</button>
+      <button class="filter-btn" data-filter="kitchen">مطابخ</button>
+    </div> -->
+
     <div class="projects-grid" id="projectsGallery">
-      <div class="project-card" data-category="living">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="صالة استقبال فاخرة"
-            loading="lazy"
-          />
+      <% if (projects && projects.length > 0) { %>
+        <% projects.forEach(project => { %>
+          <a href="/project/<%= project._id %>" class="project-card-link">
+            <div class="project-card">
+              <div class="project-image">
+                <img
+                  src="<%= project.mainImage || 'https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg' %>"
+                  alt="<%= project.title %>"
+                  loading="lazy"
+                />
+              </div>
+              <div class="project-content">
+                <span class="project-category">ديكور داخلي</span>
+                <h3><%= project.title %></h3>
+                <p><%= project.description.substring(0, 100) %>...</p>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="text-center py-5 w-100">
+          <i class="fas fa-images fa-5x text-muted mb-4"></i>
+          <h4 class="text-muted">لا توجد مشاريع ديكور داخلي حالياً</h4>
+          <p class="text-muted">سيتم إضافة أحدث أعمالنا قريباً</p>
         </div>
-        <div class="project-content">
-          <span class="project-category">صالات</span>
-          <h3>صالة استقبال فاخرة</h3>
-          <p>تصميم عصري يجمع بين الفخامة والراحة</p>
-        </div>
-      </div>
-      <div class="project-card" data-category="bedroom">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/1743227/pexels-photo-1743227.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="غرفة نوم رئيسية"
-            loading="lazy"
-          />
-        </div>
-        <div class="project-content">
-          <span class="project-category">غرف نوم</span>
-          <h3>غرفة نوم رئيسية</h3>
-          <p>تصميم هادئ بألوان محايدة وإضاءة دافئة</p>
-        </div>
-      </div>
-      <div class="project-card" data-category="kitchen">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/2062426/pexels-photo-2062426.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="مطبخ عصري"
-            loading="lazy"
-          />
-        </div>
-        <div class="project-content">
-          <span class="project-category">مطابخ</span>
-          <h3>مطبخ عصري ومتكامل</h3>
-          <p>تصميم عملي بأحدث الأجهزة والتقنيات</p>
-        </div>
-      </div>
-      <div class="project-card" data-category="living">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="مجلس رجال"
-            loading="lazy"
-          />
-        </div>
-        <div class="project-content">
-          <span class="project-category">صالات</span>
-          <h3>مجلس رجال تراثي عصري</h3>
-          <p>مزيج متناغم بين الأصالة والحداثة</p>
-        </div>
-      </div>
-      <div class="project-card" data-category="bedroom">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="غرفة أطفال"
-            loading="lazy"
-          />
-        </div>
-        <div class="project-content">
-          <span class="project-category">غرف نوم</span>
-          <h3>غرفة أطفال مرحة</h3>
-          <p>تصميم آمن وملون يحفز الإبداع</p>
-        </div>
-      </div>
-      <div class="project-card" data-category="living">
-        <div class="project-image">
-          <img
-            src="https://images.pexels.com/photos/1918291/pexels-photo-1918291.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="صالة عائلية"
-            loading="lazy"
-          />
-        </div>
-        <div class="project-content">
-          <span class="project-category">صالات</span>
-          <h3>صالة عائلية دافئة</h3>
-          <p>مساحة مريحة للتجمعات العائلية</p>
-        </div>
-      </div>
+      <% } %>
     </div>
   </div>
 </section>
+
 <section class="cta-section">
   <div class="container">
     <div class="cta-content">
@@ -173,4 +125,24 @@
     </div>
   </div>
 </section>
+
 <%- include("parts/footer.ejs") %>
+
+<!-- إضافة تأثير hover بسيط زي القديم -->
+<style>
+  .project-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .project-card-link:hover {
+    transform: translateY(-10px);
+  }
+  .project-card-link:hover .project-image img {
+    transform: scale(1.05);
+  }
+  .project-image img {
+    transition: transform 0.4s ease;
+  }
+</style>

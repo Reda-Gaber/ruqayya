@@ -1,14 +1,20 @@
 // models/DB.js
+// MongoDB connection handler optimized for serverless environments (Vercel)
 require('dotenv').config();
 
-// Debug logs
-console.log('Loading environment variables...');
-console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Found ✓' : 'Missing ✗');
+// Debug logs (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Loading environment variables...');
+  console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Found ✓' : 'Missing ✗');
+}
 
 if (!process.env.MONGODB_URI) {
   console.error('MONGODB_URI is not defined!');
-  console.error('Please add it to your .env file in the project root.');
-  process.exit(1);
+  console.error('Please add it to your .env file (local) or Vercel environment variables (production).');
+  // Don't exit in serverless - let the connection attempt fail gracefully
+  if (require.main === module) {
+    process.exit(1);
+  }
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;

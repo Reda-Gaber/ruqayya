@@ -1,0 +1,110 @@
+<%- include("parts/head.ejs") %>
+<%- include("parts/header.ejs") %>
+
+<style>
+  body { 
+    font-family: 'Cairo', sans-serif; 
+    background: #f8f9fa; 
+    direction: rtl;
+    text-align: right;
+  }
+  .news-header {
+    margin-top: 150px;
+    background: <% if (news && news.image) { %>linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('<%= news.image %>')<% } else { %>linear-gradient(135deg, #667eea 0%, #764ba2 100%)<% } %>;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 130px 0 90px;
+    text-align: center;
+    position: relative;
+    border-radius: 30px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .news-title {
+    font-size: 3.2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.7);
+  }
+  .news-date {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-top: 1rem;
+  }
+
+  .news-content-section {
+    padding: 80px 0;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    margin: 3rem 0;
+  }
+  .news-description {
+    font-size: 1.25rem;
+    line-height: 2;
+    color: #2c3e50;
+    padding: 2rem;
+    white-space: pre-wrap;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin: 2rem 0;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+  }
+  .back-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .news-header { padding: 100px 0 70px; margin-top: 120px; }
+    .news-title { font-size: 2rem; }
+  }
+</style>
+
+<div class="container my-5">
+  <% if (!news) { %>
+    <div class="text-center py-5">
+      <i class="fas fa-exclamation-triangle fa-5x text-primary mb-4"></i>
+      <h2 class="text-muted mb-3">عذراً، هذا الخبر غير موجود</h2>
+      <a href="/news" class="btn btn-primary btn-lg px-5">العودة للأخبار</a>
+    </div>
+  <% } else { %>
+    <!-- Header الخبر -->
+    <section class="news-header">
+      <h1 class="news-title"><%= news.title %></h1>
+      <p class="news-date">
+        <i class="fas fa-calendar-alt me-2"></i>
+        <%= new Date(news.createdAt).toLocaleDateString('ar-SA', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }) %>
+      </p>
+    </section>
+
+    <!-- محتوى الخبر -->
+    <section class="news-content-section">
+      <div class="news-description"><%= news.description || 'لا يوجد محتوى' %></div>
+    </section>
+
+    <a href="/news" class="back-link">
+      <i class="fas fa-arrow-right me-2"></i>العودة للأخبار
+    </a>
+  <% } %>
+</div>
+
+<%- include("parts/footer.ejs") %>
+

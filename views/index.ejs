@@ -81,12 +81,12 @@
 
         <!-- أزرار التصفية (اختياري - لو حابة تضيفيها بعدين) -->
         
-        <div class="filter-buttons">
+        <!-- <div class="filter-buttons">
             <button class="filter-btn active" data-filter="all">الكل</button>
             <button class="filter-btn" data-filter="residential">سكني</button>
             <button class="filter-btn" data-filter="commercial">تجاري</button>
             <button class="filter-btn" data-filter="industrial">صناعي</button>
-        </div>
+        </div> -->
        
 
         <div class="projects-grid" id="projectsGallery">
@@ -179,46 +179,49 @@
     </section> -->
 
     <script>
-// جلب المشاريع من الـ API وتعبئة الـ projects-grid تلقائيًا
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const response = await fetch("/api/projects");
-    const result = await response.json();
-
-    if (result.success && result.data.length > 0) {
-      const gallery = document.getElementById("projectsGallery");
-      gallery.innerHTML = ""; // ننظف المشاريع القديمة
-
-      result.data.forEach(project => {
-        // نحدد الفئة بناءً على الكلمات المفتاحية (أو تضيف حقل category في الموديل بعدين)
-        let category = "residential";
-        if (project.title.toLowerCase().includes("تجاري") || project.title.toLowerCase().includes("مركز") || project.title.toLowerCase().includes("مبنى")) {
-          category = "commercial";
-        } else if (project.title.toLowerCase().includes("مصنع") || project.title.toLowerCase().includes("صناعي")) {
-          category = "industrial";
-        }
-
-        const card = `
-          <div class="project-card" data-category="${category}">
-            <a style="text-decoration: none;" href="/project/${project._id}" class="text-decoration-none">
-              <div class="project-image">
-                <img src="${project.mainImage}" alt="${project.title}" loading="lazy"
-                     onerror="this.src='/images/placeholder.jpg'">
-              </div>
-              <div class="project-content">
-                <h3>${project.title}</h3>
-                <p>${project.description.length > 80 ? project.description.substring(0, 80) + "..." : project.description}</p>
-              </div>
-            </a>
-          </div>
-        `;
-        gallery.innerHTML += card;
-      });
-    }
-  } catch (err) {
-    console.error("فشل جلب المشاريع:", err);
-  }
-});
-</script>
+        // جلب المشاريع من الـ API وعرض 6 مشاريع فقط
+        document.addEventListener("DOMContentLoaded", async () => {
+          try {
+            const response = await fetch("/api/projects");
+            const result = await response.json();
+        
+            if (result.success && result.data.length > 0) {
+              const gallery = document.getElementById("projectsGallery");
+              gallery.innerHTML = ""; // تنظيف المشاريع الثابتة القديمة
+        
+              // نأخذ أول 6 مشاريع فقط من النتيجة
+              const projectsToShow = result.data.slice(0, 6);
+        
+              projectsToShow.forEach(project => {
+                // تحديد الفئة (category) إذا كنتِ تريدين استخدامها لاحقًا في التصفية
+                let category = "residential"; // افتراضي
+                if (project.title.includes("تجاري") || project.title.includes("مركز") || project.title.includes("مبنى")) {
+                  category = "commercial";
+                } else if (project.title.includes("مصنع") || project.title.includes("صناعي")) {
+                  category = "industrial";
+                }
+        
+                const card = `
+                  <div class="project-card" data-category="${category}">
+                    <a style="text-decoration: none;" href="/project/${project._id}" class="text-decoration-none">
+                      <div class="project-image">
+                        <img src="${project.mainImage}" alt="${project.title}" loading="lazy"
+                             onerror="this.src='/images/placeholder.jpg'">
+                      </div>
+                      <div class="project-content">
+                        <h3>${project.title}</h3>
+                        <p>${project.description.length > 80 ? project.description.substring(0, 80) + "..." : project.description}</p>
+                      </div>
+                    </a>
+                  </div>
+                `;
+                gallery.innerHTML += card;
+              });
+            }
+          } catch (err) {
+            console.error("فشل جلب المشاريع:", err);
+          }
+        });
+        </script>
 
     <%- include("parts/footer.ejs") %>

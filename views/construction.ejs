@@ -1,181 +1,175 @@
 <%- include("parts/head.ejs") %>
 <%- include("parts/header.ejs") %>
 
-    <section class="page-header">
-        <div class="container">
-            <h1>المقاولات الإنشائية</h1>
-            <p>تنفيذ احترافي لجميع أنواع المشاريع الإنشائية</p>
+<section class="page-header">
+  <div class="container">
+    <h1>المقاولات الإنشائية</h1>
+    <p>تنفيذ احترافي لجميع أنواع المشاريع الإنشائية</p>
+  </div>
+</section>
+
+<section class="service-intro">
+  <div class="container">
+    <div class="service-content">
+      <div class="service-text">
+        <h2>خدمات المقاولات الإنشائية المتكاملة</h2>
+        <p>نقدم خدمات مقاولات إنشائية شاملة تغطي جميع مراحل المشروع من التخطيط والتصميم إلى التنفيذ والتسليم. نحن نتعامل مع مشاريع متنوعة تشمل المباني السكنية، التجارية، الصناعية، والخدمية.</p>
+        <p>فريقنا من المهندسين المعماريين والمدنيين والفنيين المؤهلين يضمن تنفيذ مشروعك بأعلى معايير الجودة والسلامة، مع الالتزام بالمواعيد المحددة والميزانية المتفق عليها.</p>
+      </div>
+      <div class="service-image">
+        <img src="/images/iii.jpeg" alt="مقاولات إنشائية" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="construction-services">
+  <div class="container">
+    <div class="section-header">
+      <h2>خدماتنا الإنشائية</h2>
+      <p>نغطي جميع احتياجاتك الإنشائية بخبرة واحترافية</p>
+    </div>
+    <div class="services-list">
+      <div class="service-item"><h3>الأعمال الإنشائية الكاملة</h3><p>تنفيذ المباني من الأساسات حتى التشطيب النهائي</p></div>
+      <div class="service-item"><h3>الأعمال الخرسانية</h3><p>صب الخرسانة وأعمال الحديد والقوالب</p></div>
+      <div class="service-item"><h3>أعمال البناء والمحارة</h3><p>بناء الجدران والأسقف والتشطيبات الخارجية</p></div>
+      <div class="service-item"><h3>التشطيبات الداخلية والخارجية</h3><p>الدهانات، الأرضيات، الأسقف المستعارة</p></div>
+      <div class="service-item"><h3>الأعمال الكهربائية</h3><p>التمديدات الكهربائية والإضاءة والأنظمة الذكية</p></div>
+      <div class="service-item"><h3>الأعمال الصحية</h3><p>السباكة والصرف الصحي وأنظمة المياه</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="work-process">
+  <div class="container">
+    <div class="section-header">
+      <h2>خطوات العمل</h2>
+      <p>منهجية واضحة لضمان نجاح مشروعك</p>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step"><div class="step-number">1</div><h3>الاستشارة والتخطيط</h3><p>نستمع لاحتياجاتك ونقدم استشارات فنية ونضع خطة مفصلة للمشروع</p></div>
+      <div class="process-step"><div class="step-number">2</div><h3>التصميم والتقييم</h3><p>إعداد التصاميم المعمارية والهندسية وتقدير التكاليف</p></div>
+      <div class="process-step"><div class="step-number">3</div><h3>التنفيذ والإشراف</h3><p>البدء في التنفيذ مع إشراف دقيق على جميع مراحل العمل</p></div>
+      <div class="process-step"><div class="step-number">4</div><h3>التسليم والضمان</h3><p>تسليم المشروع بعد اجتياز جميع الفحوصات مع ضمان ما بعد التسليم</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- معرض المشاريع الإنشائية من الداتابيز -->
+
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>هل لديك مشروع إنشائي؟</h2>
+      <p>تواصل معنا للحصول على استشارة مجانية وعرض سعر تفصيلي</p>
+      <a href="/pages/contact.html" class="btn btn-light">تواصل معنا الآن</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- PROJECTS GALLERY - نسخة ديناميكية من الداتابيز -->
+<!-- معرض المشاريع الإنشائية - بنفس التنسيق القديم اللي بتحبه -->
+<section class="projects">
+  <div class="container">
+    <div class="section-header">
+      <h2>معرض المشاريع الإنشائية</h2>
+      <p>نفخر بتنفيذ مشاريعنا بأعلى معايير الجودة والدقة في المواعيد</p>
+    </div>
+
+    <div class="projects-grid" id="projectsGallery">
+      <% if (constructionProjects && constructionProjects.length > 0) { %>
+        <% constructionProjects.forEach(project => { %>
+          <div class="project-card">
+            <a href="/project/<%= project._id %>" class="text-decoration-none">
+              <div class="project-image">
+                <img src="<%= project.mainImage || '/images/placeholder.jpg' %>" 
+                     alt="<%= project.title %>" 
+                     loading="lazy"
+                     onerror="this.src='/images/placeholder.jpg'">
+              </div>
+              <div class="project-content">
+                <h3><%= project.title %></h3>
+                <p><%= project.description?.substring(0, 100) || 'مشروع إنشائي متميز' %>...</p>
+              </div>
+            </a>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="text-center py-5 w-100">
+          <i class="fas fa-tools fa-4x text-muted mb-4"></i>
+          <h4 class="text-muted">لا توجد مشاريع إنشائية حالياً</h4>
+          <p class="text-secondary">جاري إضافة المشاريع قريباً...</p>
         </div>
-    </section>
+      <% } %>
+    </div>
+  </div>
+</section>
 
-    <section class="service-intro">
-        <div class="container">
-            <div class="service-content">
-                <div class="service-text">
-                    <h2>خدمات المقاولات الإنشائية المتكاملة</h2>
-                    <p>نقدم خدمات مقاولات إنشائية شاملة تغطي جميع مراحل المشروع من التخطيط والتصميم إلى التنفيذ والتسليم. نحن نتعامل مع مشاريع متنوعة تشمل المباني السكنية، التجارية، الصناعية، والخدمية.</p>
-                    <p>فريقنا من المهندسين المعماريين والمدنيين والفنيين المؤهلين يضمن تنفيذ مشروعك بأعلى معايير الجودة والسلامة، مع الالتزام بالمواعيد المحددة والميزانية المتفق عليها.</p>
-                </div>
-                <div class="service-image">
-                    <img src="https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=800" alt="مقاولات إنشائية" loading="lazy">
-                </div>
+<!-- <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const gallery = document.getElementById("projectsGallery");
+
+  // عرض لودر أثناء التحميل
+  gallery.innerHTML = `
+    <div class="text-center py-5">
+      <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
+      <p>جاري تحميل المشاريع الإنشائية...</p>
+    </div>`;
+
+  try {
+    // جلب المشاريع الإنشائية فقط
+    const response = await fetch("/api/projects?category=مشاريع إنشائية");
+    const result = await response.json();
+
+    // إزالة اللودر
+    gallery.innerHTML = "";
+
+    // لو مفيش مشاريع أو فيه خطأ في الاستجابة
+    if (!result.success || !result.data || result.data.length === 0) {
+      gallery.innerHTML = `
+        <div class="text-center py-5 w-100">
+          <i class="fas fa-tools fa-4x text-muted mb-4"></i>
+          <h4 class="text-muted">لا توجد مشاريع إنشائية حالياً</h4>
+          <p class="text-secondary">جاري إضافة المشاريع قريباً...</p>
+        </div>`;
+      return;
+    }
+
+    // عرض المشاريع الإنشائية
+    result.data.forEach(project => {
+      const card = `
+        <div class="project-card">
+          <a href="/project/${project._id}" class="text-decoration-none text-dark">
+            <div class="project-image">
+              <img src="${project.mainImage || '/images/placeholder.jpg'}"
+                   alt="${project.title || 'مشروع إنشائي'}"
+                   loading="lazy"
+                   onerror="this.src='/images/placeholder.jpg'"
+                   style="width: 100%; height: 280px; object-fit: cover; border-radius: 15px;">
             </div>
+            <div class="project-content text-center py-3">
+              <h3 class="h5 fw-bold mb-2">${project.title || 'مشروع بدون عنوان'}</h3>
+              <p class="text-muted small mb-0">
+                ${project.description ? project.description.substring(0, 80) + '...' : 'مشروع إنشائي متميز...'}
+              </p>
+            </div>
+          </a>
         </div>
-    </section>
+      `;
+      gallery.innerHTML += card;
+    });
 
-    <section class="construction-services">
-        <div class="container">
-            <div class="section-header">
-                <h2>خدماتنا الإنشائية</h2>
-                <p>نغطي جميع احتياجاتك الإنشائية بخبرة واحترافية</p>
-            </div>
-            <div class="services-list">
-                <div class="service-item">
-                    <h3>الأعمال الإنشائية الكاملة</h3>
-                    <p>تنفيذ المباني من الأساسات حتى التشطيب النهائي</p>
-                </div>
-                <div class="service-item">
-                    <h3>الأعمال الخرسانية</h3>
-                    <p>صب الخرسانة وأعمال الحديد والقوالب</p>
-                </div>
-                <div class="service-item">
-                    <h3>أعمال البناء والمحارة</h3>
-                    <p>بناء الجدران والأسقف والتشطيبات الخارجية</p>
-                </div>
-                <div class="service-item">
-                    <h3>التشطيبات الداخلية والخارجية</h3>
-                    <p>الدهانات، الأرضيات، الأسقف المستعارة</p>
-                </div>
-                <div class="service-item">
-                    <h3>الأعمال الكهربائية</h3>
-                    <p>التمديدات الكهربائية والإضاءة والأنظمة الذكية</p>
-                </div>
-                <div class="service-item">
-                    <h3>الأعمال الصحية</h3>
-                    <p>السباكة والصرف الصحي وأنظمة المياه</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="work-process">
-        <div class="container">
-            <div class="section-header">
-                <h2>خطوات العمل</h2>
-                <p>منهجية واضحة لضمان نجاح مشروعك</p>
-            </div>
-            <div class="process-timeline">
-                <div class="process-step">
-                    <div class="step-number">1</div>
-                    <h3>الاستشارة والتخطيط</h3>
-                    <p>نستمع لاحتياجاتك ونقدم استشارات فنية ونضع خطة مفصلة للمشروع</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <h3>التصميم والتقييم</h3>
-                    <p>إعداد التصاميم المعمارية والهندسية وتقدير التكاليف</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <h3>التنفيذ والإشراف</h3>
-                    <p>البدء في التنفيذ مع إشراف دقيق على جميع مراحل العمل</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">4</div>
-                    <h3>التسليم والضمان</h3>
-                    <p>تسليم المشروع بعد اجتياز جميع الفحوصات مع ضمان ما بعد التسليم</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="projects-gallery">
-        <div class="container">
-            <div class="section-header">
-                <h2>معرض المشاريع الإنشائية</h2>
-                <p>مجموعة من مشاريعنا المنفذة بنجاح</p>
-            </div>
-
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">الكل</button>
-                <button class="filter-btn" data-filter="residential">سكني</button>
-                <button class="filter-btn" data-filter="commercial">تجاري</button>
-                <button class="filter-btn" data-filter="industrial">صناعي</button>
-            </div>
-
-            <div class="projects-grid" id="projectsGallery">
-                <div class="project-card" data-category="residential">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=800" alt="فيلا سكنية حديثة" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">سكني</span>
-                        <h3>فيلا سكنية حديثة</h3>
-                        <p>تصميم وتنفيذ فيلا سكنية فاخرة بمساحة 500 متر مربع</p>
-                    </div>
-                </div>
-                <div class="project-card" data-category="commercial">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800" alt="مبنى تجاري" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">تجاري</span>
-                        <h3>مبنى تجاري متعدد الطوابق</h3>
-                        <p>مشروع تجاري متكامل بمساحة 2000 متر مربع</p>
-                    </div>
-                </div>
-                <div class="project-card" data-category="residential">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/259593/pexels-photo-259593.jpeg?auto=compress&cs=tinysrgb&w=800" alt="مجمع سكني" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">سكني</span>
-                        <h3>مجمع سكني متكامل</h3>
-                        <p>20 وحدة سكنية بتصاميم عصرية ومرافق متكاملة</p>
-                    </div>
-                </div>
-                <div class="project-card" data-category="industrial">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/1089842/pexels-photo-1089842.jpeg?auto=compress&cs=tinysrgb&w=800" alt="مستودعات صناعية" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">صناعي</span>
-                        <h3>مستودعات صناعية</h3>
-                        <p>مجمع مستودعات بمساحة 5000 متر مربع</p>
-                    </div>
-                </div>
-                <div class="project-card" data-category="commercial">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=800" alt="مركز تسوق" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">تجاري</span>
-                        <h3>مركز تسوق عصري</h3>
-                        <p>مركز تسوق بتصميم حديث ومرافق متطورة</p>
-                    </div>
-                </div>
-                <div class="project-card" data-category="residential">
-                    <div class="project-image">
-                        <img src="https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=800" alt="فلل فاخرة" loading="lazy">
-                    </div>
-                    <div class="project-content">
-                        <span class="project-category">سكني</span>
-                        <h3>مشروع فلل فاخرة</h3>
-                        <p>8 فلل بتصاميم معمارية استثنائية</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-content">
-                <h2>هل لديك مشروع إنشائي؟</h2>
-                <p>تواصل معنا للحصول على استشارة مجانية وعرض سعر تفصيلي</p>
-                <a href="/pages/contact.html" class="btn btn-light">تواصل معنا الآن</a>
-            </div>
-        </div>
-    </section>
-
+  } catch (err) {
+    console.error("فشل جلب المشاريع الإنشائية:", err);
+    gallery.innerHTML = `
+      <div class="text-center py-5 text-danger">
+        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+        <h5>حدث خطأ أثناء تحميل المشاريع</h5>
+        <p>حاول تحديث الصفحة لاحقاً</p>
+      </div>`;
+  }
+});
+</script> -->
 <%- include("parts/footer.ejs") %>

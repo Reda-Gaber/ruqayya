@@ -1,53 +1,143 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const cookieParser = require('cookie-parser');
+/**
+ * Express.js Server - Ruqayya Al Yami Contracting
+ * 
+ * This server is configured to work both locally and on Vercel (serverless).
+ * 
+ * ENVIRONMENT VARIABLES REQUIRED (add these in Vercel Dashboard):
+ * 
+ * Required:
+ * - MONGODB_URI: MongoDB Atlas connection string
+ *   Example: mongodb+srv://user:pass@cluster.mongodb.net/dbname?retryWrites=true&w=majority
+ * 
+ * - SESSION_SECRET: Secret key for session encryption
+ *   Generate: openssl rand -base64 32
+ * 
+ * Optional:
+ * - CLOUDINARY_CLOUD_NAME: Cloudinary cloud name (for image uploads)
+ * - CLOUDINARY_API_KEY: Cloudinary API key
+ * - CLOUDINARY_API_SECRET: Cloudinary API secret
+ * - FRONTEND_URL: Frontend URL for CORS (defaults to '*' if not set)
+ * - NODE_ENV: Automatically set to 'production' by Vercel
+ * - PORT: Automatically assigned by Vercel (don't set manually)
+ * 
+ * DEPLOYMENT:
+ * - Local: Run `npm start` or `npm run dev`
+ * - Vercel: Deploy via Vercel CLI or GitHub integration
+ *   See VERCEL_DEPLOYMENT.md for detailed instructions
+ */
 
-const dbConnect = require('./models/DB');
-const bcrypt = require("bcrypt");
-const User = require('./models/user'); // استورد هنا بعد الـ session
+// Load environment variables (Vercel automatically provides them, dotenv is for local development)
+require("dotenv").config();
+
+const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+
+const multer = require("multer");
+const { storage } = require("./config/cloudinary"); // أو المسار اللي عندك
+const upload = multer({ storage });
+
+const dbConnect = require("./models/DB");
+const mongoose = require("mongoose");
+const User = require("./models/user");
+const Project = require("./models/projects.model");
+const News = require("./models/news.model");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// ------------------- Session & Security -------------------
-app.use(cookieParser());
-
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'ruqayya-al-yami-very-very-2025-super-secret',
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
-    collectionName: 'sessions',
-    ttl: 7 * 24 * 60 * 60, // 7 أيام
-  }),
-  cookie: {
-    httpOnly: true,
-    secure: false,               // غيّر لـ true لما ترفع على HTTPS
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  }
+// CORS configuration - Allow all origins for now (update with your frontend URL in production)
+// For production, replace '*' with your actual frontend domain: ['https://yourdomain.com']
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ------------------- Middleware -------------------
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "images")));
+app.use(cookieParser());
 
-// View Engine
+app.use(
+  session({
+    secret:
+      process.env.SESSION_SECRET ||
+      "ruqayya-al-yami-very-very-2025-super-secret",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      collectionName: "sessions",
+      ttl: 7 * 24 * 60 * 60,
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // true on Vercel (HTTPS), false for local dev
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    },
+  })
+);
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files with caching
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: '1y',
+  etag: true,
+  lastModified: true
+}));
+app.use(express.static(path.join(__dirname, "images"), {
+  maxAge: '1y',
+  etag: true,
+  lastModified: true
+}));
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// ------------------- Database Connection -------------------
-dbConnect().catch(err => {
-  console.error('فشل الاتصال بـ MongoDB:', err.message);
-  process.exit(1);
+// Database connection - In serverless, connections are reused across invocations
+// Don't exit process in serverless environment
+dbConnect().catch((err) => {
+  console.error("فشل الاتصال بـ MongoDB:", err.message);
+  // Only exit in non-serverless environments
+  if (require.main === module) {
+    process.exit(1);
+  }
 });
 
-// ------------------- Auth Middleware (الحماية الكاملة) -------------------
+app.use(async (req, res, next) => {
+  try {
+    const SiteSettings = require("./models/settings.model");
+    let settings = await SiteSettings.getSettings();
+    
+    // تحديث العنوان والأرقام إذا كانت قديمة
+    if (!settings.address || settings.address.includes('الرياض') || settings.address.includes('الملقا')) {
+      settings.address = "نجران رجلاء حي فواز";
+      await SiteSettings.findOneAndUpdate({}, { address: "نجران رجلاء حي فواز" }, { upsert: true });
+    }
+    
+    // تحديث الأرقام إذا كانت قديمة
+    if (!settings.phones || settings.phones.length === 0 || settings.phones[0].includes('966501234567')) {
+      settings.phones = ["0503119104", "0560864811"];
+      await SiteSettings.findOneAndUpdate({}, { phones: ["0503119104", "0560864811"] }, { upsert: true });
+    }
+    
+    res.locals.settings = settings;
+  } catch (err) {
+    res.locals.settings = {
+      siteName: "مؤسسة رقية اليامي",
+      phones: ["0503119104", "0560864811"],
+      address: "نجران رجلاء حي فواز",
+      email: "info@roqaya-alyami.sa",
+      social: {},
+    };
+  }
+  next();
+});
+
 const requireAuth = (req, res, next) => {
   if (req.session && req.session.authenticated) {
     next();
@@ -56,54 +146,169 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-// ------------------- Routes العادية (الفرونت) -------------------
 app.get("/", (req, res) => res.render("index"));
-app.get("/news", (req, res) => res.render("news"));
-app.get("/sales", (req, res) => res.render("sales"));
-app.get("/construction", (req, res) => res.render("construction"));
-app.get("/decor", (req, res) => res.render("decor"));
+
 app.get("/about", (req, res) => res.render("about"));
+
 app.get("/contact", (req, res) => res.render("contact"));
 
-app.get('/projects', async (req, res) => {
+app.get("/construction", async (req, res) => {
   try {
-    const response = await fetch(`${req.protocol}://${req.get('host')}/api/projects`);
-    const result = await response.json();
-    res.render('admin/projects', {
-      projects: result.success ? result.data : [],
-      pageTitle: 'مشاريعنا - مؤسسة رقية اليامي للمقاولات'
+    const projects = await Project.find({ category: 'مشاريع إنشائية' }).sort({
+      createdAt: -1,
+    });
+    res.render("construction", {
+      constructionProjects: projects,
+      pageTitle: "المقاولات الإنشائية",
     });
   } catch (err) {
-    res.render('admin/projects', { projects: [], pageTitle: 'مشاريعنا' });
+    console.error("خطأ في جلب المشاريع الإنشائية:", err.message);
+    res.render("construction", {
+      constructionProjects: [],
+      pageTitle: "المقاولات الإنشائية",
+    });
   }
 });
 
-app.get('/project/:id', async (req, res) => {
+app.get("/decor", async (req, res) => {
   try {
-    const apiRes = await fetch(`http://localhost:3001/api/projects/${req.params.id}`);
-    const result = await apiRes.json();
-    res.render('project', {
-      project: result.success ? result.data : null,
-      pageTitle: result.success ? result.data.title : 'مشروع غير موجود'
+    const projects = await Project.find({ category: "ديكورات داخلية" }).sort({
+      createdAt: -1,
+    });
+
+    res.render("decor", {
+      title: "الديكورات الداخلية - مؤسسة رقية اليامي",
+      projects: projects, 
     });
   } catch (err) {
-    res.render('project', { project: null });
+    console.error("خطأ في جلب مشاريع الديكور:", err.message);
+    res.render("decor", {
+      title: "الديكورات الداخلية - مؤسسة رقية اليامي",
+      projects: [],
+    });
   }
 });
 
-app.use('/api/projects', require('./routes/api/projects'));
+app.get("/news", async (req, res) => {
+  try {
+    // Set cache headers for better performance
+    res.set('Cache-Control', 'public, max-age=300'); // Cache for 5 minutes
+    const news = await News.find().sort({ createdAt: -1 }).lean(); // Use lean() for better performance
+    res.render("news", {
+      newsList: news,
+      pageTitle: "الأخبار والفعاليات",
+    });
+  } catch (err) {
+    console.error("خطأ في جلب الأخبار:", err.message);
+    res.render("news", { newsList: [], pageTitle: "الأخبار" });
+  }
+});
 
-// ------------------- صفحة اللوجن (متاحة للكل) -------------------
+app.get("/news/:id", async (req, res) => {
+  try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).render("news-detail", {
+        news: null,
+        pageTitle: "الخبر غير موجود",
+        error: "معرف الخبر غير صحيح",
+      });
+    }
+
+    const newsItem = await News.findById(req.params.id);
+    if (!newsItem) {
+      return res.status(404).render("news-detail", {
+        news: null,
+        pageTitle: "الخبر غير موجود",
+        error: "الخبر المطلوب غير موجود",
+      });
+    }
+    res.render("news-detail", {
+      news: newsItem,
+      pageTitle: newsItem.title,
+    });
+  } catch (err) {
+    console.error("خطأ في جلب تفاصيل الخبر:", err.message);
+    res.status(500).render("news-detail", {
+      news: null,
+      pageTitle: "خطأ",
+      error: "حدث خطأ في تحميل الخبر",
+    });
+  }
+});
+
+app.get("/projects", async (req, res) => {
+  try {
+    const projects = await Project.find().sort({ createdAt: -1 });
+    res.render("projects", {
+      projects,
+      pageTitle: "جميع المشاريع",
+    });
+  } catch (err) {
+    console.error("خطأ في جلب المشاريع:", err.message);
+    res.render("projects", { projects: [], pageTitle: "جميع المشاريع" });
+  }
+});
+
+app.get("/project/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).render("404", { pageTitle: "المشروع غير موجود" });
+    }
+    res.render("project", {
+      project,
+      pageTitle: project.title,
+    });
+  } catch (err) {
+    console.error("خطأ في جلب تفاصيل المشروع:", err.message);
+    res.status(500).render("404", { pageTitle: "خطأ في تحميل المشروع" });
+  }
+});
+
+// Public API endpoint for fetching all news - MUST be before /api/ routes
+app.get("/api/news", async (req, res) => {
+  try {
+    // Set cache headers
+    res.set('Cache-Control', 'public, max-age=300'); // Cache for 5 minutes
+    const news = await News.find().sort({ createdAt: -1 }).lean(); // Use lean() for better performance
+    res.json({ success: true, news });
+  } catch (err) {
+    console.error("خطأ جلب الأخبار:", err.message);
+    res.status(500).json({ success: false, message: "فشل جلب الأخبار" });
+  }
+});
+
+// API endpoint for single news item - MUST be before /api/ routes
+app.get("/api/news/:id", async (req, res) => {
+  try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "معرف الخبر غير صحيح" });
+    }
+
+    const newsItem = await News.findById(req.params.id);
+    if (!newsItem) {
+      return res.status(404).json({ success: false, message: "الخبر غير موجود" });
+    }
+    res.json({ success: true, news: newsItem });
+  } catch (err) {
+    console.error("خطأ في جلب تفاصيل الخبر:", err.message);
+    res.status(500).json({ success: false, message: "فشل جلب الخبر" });
+  }
+});
+
+app.use("/api/", require("./routes/api/projects"));
+
 app.get("/admin/login", (req, res) => {
   res.render("login");
 });
 
-// ------------------- تسجيل الدخول -------------------
 app.post("/admin/login", async (req, res) => {
   try {
-    await dbConnect();
-
-    const username = (req.body.uname || req.body.username || "").toString().trim();
+    const username = (req.body.uname || req.body.username || "")
+      .toString()
+      .trim();
     const password = req.body.password || "";
 
     if (!username || !password) {
@@ -111,75 +316,117 @@ app.post("/admin/login", async (req, res) => {
     }
 
     const user = await User.findOne({ username });
-    if (!user || !await user.comparePassword(password)) {
-      return res.status(400).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
+    if (!user || !(await user.comparePassword(password))) {
+      return res
+        .status(400)
+        .json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
     }
 
-    // حفظ الجلسة
     req.session.authenticated = true;
     req.session.user = { id: user._id, username: user.username };
 
     console.log("تم تسجيل الدخول بنجاح:", username);
     res.redirect("/admin/projects");
-
   } catch (err) {
     console.error("خطأ في تسجيل الدخول:", err.message);
     res.status(500).json({ error: "خطأ في السيرفر" });
   }
 });
 
-// ------------------- حماية كل routes الأدمن -------------------
-app.use('/admin', requireAuth); // أي حاجة تبدأ بـ /admin لازم لوجن
+app.get("/interior", async (req, res) => {
+  try {
+    const interiorProjects = await Project.find({
+      category: "ديكورات داخلية",
+    }).sort({ createdAt: -1 });
 
-// مثال إضافي لو عايز dashboard منفصل
-// app.get('/admin/dashboard', requireAuth, (req, res) => res.render('admin/dashboard'));
+    res.render("interior", {
+      title: "الديكورات الداخلية - مؤسسة رقية اليامي",
+      projects: interiorProjects,
+    });
+  } catch (err) {
+    console.error("خطأ في جلب المشاريع الداخلية:", err.message);
+    res.render("interior", {
+      title: "الديكورات الداخلية - مؤسسة رقية اليامي",
+      projects: [],
+    });
+  }
+});
 
-// ------------------- تسجيل الخروج -------------------
+app.use("/admin", requireAuth);
+
+app.use("/admin", require("./routes/projects.route"));
+
 app.get("/admin/logout", requireAuth, (req, res) => {
   req.session.destroy(() => {
     res.redirect("/admin/login");
   });
 });
 
-// ------------------- Routes الأدمن (محمية تلقائيًا بفضل app.use('/admin', requireAuth)) -------------------
-app.use('/admin', require('./routes/projects.route')); // لو عندك routes تانية للأدمن
-
-// ------------------- Tools مؤقتة (أزلها لما تخلّص التطوير) -------------------
 app.get("/create-admin", async (req, res) => {
   try {
-    await dbConnect();
     const username = "20002000";
     const password = "222000";
-
     await User.deleteOne({ username });
-    const newUser = await User.create({ username, password });
-
-    res.send(`
-      <h1 style="color:green">تم إنشاء الأدمن بنجاح!</h1>
-      <p>Username: <b>${username}</b></p>
-      <p>Password: <b>${password}</b></p>
-    `);
+    await User.create({ username, password });
+    res.send(
+      `<h1 style="color:green">تم إنشاء الأدمن!</h1><p>User: ${username} | Pass: ${password}</p>`
+    );
   } catch (err) {
     res.status(500).send("خطأ: " + err.message);
   }
 });
 
-app.get("/clean-users", async (req, res) => {
-  await User.deleteMany({});
-  res.send("تم مسح كل اليوزرز");
+app.use("/admin/api/employees", require("./routes/employee.route"));
+app.use("/api/settings", require("./routes/api/settings.route"));
+
+app.get("/admin/api/news", async (req, res) => {
+  try {
+    const news = await News.find().sort({ createdAt: -1 });
+    res.json({ success: true, news });
+  } catch (err) {
+    console.error("خطأ جلب الأخبار:", err.message);
+    res.status(500).json({ success: false, message: "فشل جلب الأخبار" });
+  }
 });
 
-// ------------------- API Test -------------------
-app.get("/api/test", async (req, res) => {
-  await dbConnect();
-  res.json({ message: "Express + MongoDB Connected ✓" });
+app.post("/admin/api/news", upload.single("image"), async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    const newsItem = await News.create({
+      title,
+      description,
+      image: req.file ? req.file.path : null, // هياخد الصورة من Cloudinary
+    });
+
+    res.json({ success: true, news: newsItem });
+  } catch (err) {
+    console.error("خطأ إضافة خبر:", err.message);
+    res.status(500).json({ success: false, message: "فشل إضافة الخبر" });
+  }
 });
 
-// ------------------- Start Server -------------------
-// app.listen(PORT, () => {
-//   console.log(`Server running → http://localhost:${PORT}`);
-//   console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
-// });
+app.delete("/admin/api/news/:id", async (req, res) => {
+  try {
+    await News.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("خطأ حذف الخبر:", err.message);
+    res.status(500).json({ success: false, message: "فشل حذف الخبر" });
+  }
+});
 
-// server.js (أو app.js)
-module.exports = app;   // ← مهم جدًا
+// Export app for serverless compatibility (Vercel)
+// The app.listen() only runs when executed directly (local development)
+// On Vercel, the serverless handler in api/server.js will use this exported app
+if (require.main === module) {
+  const PORT = process.env.PORT || 3003;
+  app.listen(PORT, () => {
+    console.log(`Server running → http://localhost:${PORT}`);
+    console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
+    console.log(`Construction Page → http://localhost:${PORT}/construction`);
+    console.log(`All Projects → http://localhost:${PORT}/projects`);
+  });
+}
+
+module.exports = app;

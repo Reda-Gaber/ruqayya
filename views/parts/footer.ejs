@@ -15,11 +15,28 @@
                 </p>
 
                 <div class="footer-social">
-                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/966501234567" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <% 
+                    const fbLink = (settings && settings.social && settings.social.facebook) ? settings.social.facebook : '#';
+                    const igLink = (settings && settings.social && settings.social.instagram) ? settings.social.instagram : '#';
+                    const waLink = (settings && settings.social && settings.social.whatsapp) ? 'https://wa.me/' + settings.social.whatsapp.replace(/[^0-9]/g, '') : 'https://wa.me/966503119104';
+                    const twLink = (settings && settings.social && settings.social.twitter) ? settings.social.twitter : '#';
+                    const tkLink = (settings && settings.social && settings.social.tiktok) ? settings.social.tiktok : '#';
+                    %>
+                    <a href="<%= fbLink %>" target="_blank" rel="noopener noreferrer" title="فيسبوك">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="<%= igLink %>" target="_blank" rel="noopener noreferrer" title="إنستجرام">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="<%= waLink %>" target="_blank" rel="noopener noreferrer" title="واتساب">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="<%= twLink %>" target="_blank" rel="noopener noreferrer" title="تويتر">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+                    <a href="<%= tkLink %>" target="_blank" rel="noopener noreferrer" title="تيك توك">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
                 </div>
             </div>
 
@@ -31,7 +48,6 @@
                     <li><a href="/about">من نحن</a></li>
                     <li><a href="/construction">مقاولات إنشائية</a></li>
                     <li><a href="/decor">ديكورات داخلية</a></li>
-                    <li><a href="/sales">المبيعات</a></li>
                     <li><a href="/news">الأخبار</a></li>
                     <li><a href="/contact">اتصل بنا</a></li>
                 </ul>
@@ -44,19 +60,26 @@
                     <li>
                         <i class="fas fa-phone"></i>
                         <div>
-                            <a href="tel:+966501234567">+966 50 123 4567</a>
+                            <% if (settings && settings.phones && settings.phones.length > 0) { %>
+                                <% settings.phones.forEach(function(phone) { %>
+                                    <a href="tel:+966<%= phone.replace(/^0/, '') %>"><%= phone %></a><br>
+                                <% }); %>
+                            <% } else { %>
+                                <a href="tel:+966503119104">0503119104</a><br>
+                                <a href="tel:+966560864811">0560864811</a>
+                            <% } %>
                         </div>
                     </li>
                     <li>
                         <i class="fas fa-envelope"></i>
                         <div>
-                            <a href="mailto:info@roqaya-alyami.sa">info@roqaya-alyami.sa</a>
+                            <a href="mailto:<%= (settings && settings.email) ? settings.email : 'info@roqaya-alyami.sa' %>"><%= (settings && settings.email) ? settings.email : 'info@roqaya-alyami.sa' %></a>
                         </div>
                     </li>
                     <li>
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
-                            الرياض، حي الملقا<br>
+                            نجران رجلاء حي فواز<br>
                             المملكة العربية السعودية
                         </div>
                     </li>
@@ -98,6 +121,5 @@
 </script>
 
 <script src="/js/main.js"></script>
-<script src="/js/news-detail.js"></script>
 </body>
 </html>

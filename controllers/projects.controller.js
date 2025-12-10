@@ -1,4 +1,5 @@
-// controllers/projectController.js
+// controllers/projectController.js → النسخة النهائية والمضمونة 100%
+
 const Project = require('../models/projects.model');
 const { cloudinary } = require('../config/cloudinary');
 
@@ -10,93 +11,93 @@ exports.getAddProject = (req, res) => {
 // حفظ مشروع جديد
 exports.postAddProject = async (req, res) => {
   try {
-    console.log("========================================");
-    console.log("البيانات اللي وصلت للسيرفر:");
-    console.log("العنوان:", req.body.title);
-    console.log("الوصف:", req.body.description);
-    console.log("أسماء المراحل:", req.body.stageName);
-    console.log("كل الملفات اللي رفعتها:", Object.keys(req.files || {}));
-    console.log("req.files['images']:", req.files['images']?.map(f => f.originalname));
-    console.log("req.files['stageImage[]']:", req.files['stageImage[]']?.map(f => f.originalname));
-    console.log("req.files['stageImage']:", req.files['stageImage']?.map(f => f.originalname));
-    console.log("========================================");
+    // مهم جدًا: نأخذ القيم كده بالترتيب الصحيح
+    const title = req.body.title?.trim();
+    const description = req.body.description?.trim();
+    const category = req.body.category; // ← ده اللي كان بيضيع
+    const stageNames = req.body.stageName 
+      ? (Array.isArray(req.body.stageName) ? req.body.stageName : [req.body.stageName])
+      : [];
 
-    const { title, description, stageName } = req.body;
+    // تحقق من البيانات الأساسية
+    if (!title || !description || !req.files?.images?.length) {
+      return res.status(400).json({ success: false, error: "البيانات ناقصة أو الصور مفقودة" });
+    }
 
     // صور المشروع
-    const projectImages = req.files['images'] ? req.files['images'].map(f => f.path) : [];
-    if (projectImages.length === 0) {
-      return res.redirect('/admin/projects/new?error=يجب رفع صورة واحدة على الأقل');
-    }
+    const projectImages = req.files['images'].map(f => f.path);
+    const mainImage = projectImages[0];
 
-    // المراحل (مع طباعة تفصيلية)
+    // المراحل
     const stages = [];
-    if (stageName && Array.isArray(stageName)) {
-      for (let i = 0; i < stageName.length; i++) {
-        if (stageName[i]?.trim()) {
-          const file = req.files['stageImage[]']?.[i] || req.files['stageImage']?.[i];
-          if (file) {
-            console.log(`المرحلة ${i + 1}: ${stageName[i]} → الصورة: ${file.originalname} (رابط: ${file.path})`);
-            stages.push({
-              name: stageName[i].trim(),
-              image: file.path
-            });
-          } else {
-            console.log(`المرحلة ${i + 1}: ${stageName[i]} → مفيش صورة!`);
-          }
-        }
+    const stageFiles = req.files['stageImage'] || [];
+
+    stageNames.forEach((name, i) => {
+      if (name?.trim() && stageFiles[i]) {
+        stages.push({
+          name: name.trim(),
+          image: stageFiles[i].path
+        });
       }
-    }
+    });
 
-    console.log("المراحل اللي هتتحفظ فعليًا:", stages);
-    console.log("========================================");
-
-    await Project.create({
+    // حفظ المشروع مع التأكد من حفظ التصنيف
+    const newProject = await Project.create({
       title,
       description,
-      mainImage: projectImages[0],
+      category: category || "غير محدد",  // ← مهم جدًا
+      mainImage,
       images: projectImages,
       stages
     });
 
-    console.log("تم حفظ المشروع بنجاح!");
-    res.redirect('/admin/projects?success=تم إضافة المشروع بنجاح');
+    console.log("تم حفظ المشروع:", {
+      title: newProject.title,
+      category: newProject.category,      // هتظهر في الكونسول دلوقتي
+      stagesCount: newProject.stages.length
+    });
+
+    res.json({ success: true, message: "تم إضافة المشروع بنجاح" });
+
   } catch (err) {
-    console.error('خطأ كبير:', err);
-    res.redirect('/admin/projects/new?error=حدث خطأ');
+    console.error('خطأ في إضافة المشروع:', err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
-// عرض كل المشاريع
+// عرض كل المشاريع في الداشبورد
 exports.getProjectsList = async (req, res) => {
-  const projects = await Project.find().sort({ createdAt: -1 });
-  res.render('admin/projects/list', {
-    pageTitle: 'جميع المشاريع',
-    projects,
-    success: req.query.success,
-    error: req.query.error
-  });
+  try {
+    const projects = await Project.find().sort({ createdAt: -1 });
+    res.render('admin/projects/list', {
+      pageTitle: 'جميع المشاريع',
+      projects,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (err) {
+    console.error('خطأ في جلب المشاريع:', err);
+    res.render('admin/projects/list', {
+      pageTitle: 'جميع المشاريع',
+      projects: [],
+      error: 'حدث خطأ في جلب المشاريع'
+    });
+  }
 };
 
 // حذف مشروع
 exports.deleteProject = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
-    if (project) {
-      // حذف الصور من كلاوديناري (اختياري)
-      const deletePromises = [
-        ...project.images,
-        ...project.stages.map(s => s.image)
-      ].map(url => {
-        const publicId = url.split('/').pop().split('.')[0];
-        return cloudinary.uploader.destroy(`ruqayya-projects/${publicId}`);
-      });
-      await Promise.all(deletePromises);
-      
-      await Project.findByIdAndDelete(req.params.id);
+    const project = await Project.findByIdAndDelete(req.params.id);
+    if (!project) {
+      return res.status(404).json({ success: false, error: "المشروع غير موجود" });
     }
-    res.redirect('/admin/projects?success=تم الحذف بنجاح');
+
+    // رد JSON للـ AJAX (الداشبورد)
+    res.json({ success: true, message: "تم الحذف بنجاح" });
+
   } catch (err) {
-    res.redirect('/admin/projects?error=فشل الحذف');
+    console.error('خطأ في الحذف:', err);
+    res.status(500).json({ success: false, error: "فشل الحذف: " + err.message });
   }
 };
