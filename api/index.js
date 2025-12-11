@@ -1,15 +1,30 @@
-// vercel.js   ← ضعه في الـ root أو جوا api/index.js
-import '../server.js';   // ده هيشغل الـ server.js القديم كامل (مع كل الـ routes والـ middleware)
+import dbConnect from '../models/DB.js';
+import projectsRoute from './projects.route.js';
+import employeeRoute from './employee.route.js';
+import newsRoute from './news.route.js';
+import settingsRoute from './settings.route.js';
+// أضف باقي الروتس لو فيه
+
+import express from 'express';
+const app = express();
+app.use(express.json());
+
+await dbConnect(); // مهم جدًا
+
+app.use('/projects', projectsRoute);
+app.use('/employee', employeeRoute);
+app.use('/news', newsRoute);
+app.use('/settings', settingsRoute);
+// أضف الباقي
+
+// Vercel handler
+export default async function handler(req, res) {
+  // كل الطلبات هتيجي هنا وExpress هيتعامل معاها
+  app(req, res);
+}
 
 export const config = {
   api: {
-    bodyParser: false,   // لو عندك upload أو raw body
+    bodyParser: false,
   },
 };
-
-export default function handler(req, res) {
-  // Vercel هيستدعي الـ server.js القديم تلقائيًا لما نستورد فوق
-  // بس احنا مش محتاجين نعمل حاجة هنا
-  // الـ Express app شغال بالفعل من السطر الأول
-  return;
-}
