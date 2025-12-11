@@ -372,9 +372,12 @@ app.delete("/admin/api/news/:id", async (req, res) => {
 });
 
 // Export app for serverless compatibility
-// احذف السطر ده كله
-// app.listen(PORT, () => { ... });
+  app.listen(PORT, () => {
+    console.log(`Server running → http://localhost:${PORT}`);
+    console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
+    console.log(`Construction Page → http://localhost:${PORT}/construction`);
+    console.log(`All Projects → http://localhost:${PORT}/projects`);
+  });
 
-// واكتب بداله السطرين دول بس:
-const server = app.listen(process.env.PORT || 3003);
-module.exports = server; // مهم جدًا لـ Vercel
+
+// module.exports = app;
