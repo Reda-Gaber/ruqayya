@@ -1,21 +1,20 @@
-// models/DB.js  أو  lib/mongodb.js  (غيّر المسار زي ما تحب)
-import mongoose from 'mongoose';
+// models/DB.js
+require('dotenv').config();
+
+// Debug logs
+console.log('Loading environment variables...');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Found ✓' : 'Missing ✗');
+
+if (!process.env.MONGODB_URI) {
+  console.error('MONGODB_URI is not defined!');
+  console.error('Please add it to your .env file in the project root.');
+  process.exit(1);
+}
 
 const MONGODB_URI = process.env.MONGODB_URI;
+const mongoose = require('mongoose');
 
-if (!MONGODB_URI) {
-  throw new Error('Please define MONGODB_URI in Vercel Environment Variables');
-}
-
-/**
- * Global is used here to maintain a cached connection across hot reloads
- * in development and across serverless invocations in production.
- */
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+let cached = global.mongoose || { conn: null, promise: null };
 
 async function dbConnect() {
   if (cached.conn) {
@@ -23,34 +22,28 @@ async function dbConnect() {
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,            // ده المهم عشان ميحصلش الـ error اللي شايفينه
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 30000,
-      connectTimeoutMS: 30000,
-      socketTimeoutMS: 45000,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts)
-      .then((mongooseInstance) => {
-        console.log('MongoDB Connected Successfully');
-        return mongooseInstance;
-      })
-      .catch((err) => {
-        console.error('MongoDB connection error:', err.message);
-        cached.promise = null; // مهم عشان يحاول تاني في الطلب الجاي
-        throw err;
-      });
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+    }).then((mongooseInstance) => {
+      console.log('Successfully connected to MongoDB Atlas');
+      return mongooseInstance;
+    }).catch((error) => {
+      console.error('Failed to connect to MongoDB:', error.message);
+      throw error;
+    });
   }
 
   try {
     cached.conn = await cached.promise;
-  } catch (e) {
+  } catch (error) {
     cached.promise = null;
-    throw e;
+    throw error;
   }
 
   return cached.conn;
 }
 
-export default dbConnect;
+// Persist connection across hot reloads in development
+global.mongoose = cached;
+
+module.exports = dbConnect;

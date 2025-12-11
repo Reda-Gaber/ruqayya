@@ -1,6 +1,6 @@
 // controllers/projectController.js → النسخة النهائية والمضمونة 100%
 
-const Project = require('../models/projects.m');
+const Project = require('../models/projects.model');
 const { cloudinary } = require('../config/cloudinary');
 
 // عرض صفحة إضافة مشروع

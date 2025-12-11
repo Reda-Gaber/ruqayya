@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const Settings = require('../models/settings.model');
+const Settings = require('../../models/settings.model');
 
 router.get('/', async (req, res) => {
   try {
