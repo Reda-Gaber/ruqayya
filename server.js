@@ -37,7 +37,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const multer = require("multer");
-const { storage } = require("./config/cloudinary"); // أو المسار اللي عندك
+const { storage } = require("./config/cloudinary");
 const upload = multer({ storage });
 
 const dbConnect = require("./models/DB");
@@ -48,91 +48,62 @@ const News = require("./models/news.model");
 
 const app = express();
 
-// CORS configuration - Allow all origins for now (update with your frontend URL in production)
-// For production, replace '*' with your actual frontend domain: ['https://yourdomain.com']
+// === Middleware ===
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
 
 app.use(cookieParser());
-
-app.use(
-  session({
-    secret:
-      process.env.SESSION_SECRET ||
-      "ruqayya-al-yami-very-very-2025-super-secret",
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-      collectionName: "sessions",
-      ttl: 7 * 24 * 60 * 60,
-    }),
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true on Vercel (HTTPS), false for local dev
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    },
-  })
-);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static files with caching
-app.use(express.static(path.join(__dirname, "public"), {
-  maxAge: '1y',
-  etag: true,
-  lastModified: true
+app.use(session({
+  secret: process.env.SESSION_SECRET || "fallback-secret-2025",
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: "sessions",
+    ttl: 7 * 24 * 60 * 60
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  }
 }));
-app.use(express.static(path.join(__dirname, "images"), {
-  maxAge: '1y',
-  etag: true,
-  lastModified: true
-}));
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "images")));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Database connection - Connect asynchronously without blocking server startup
-// This allows the server to start even if MongoDB connection is slow or fails initially
+// === DB Connection (non-blocking) ===
 (async () => {
   try {
     await dbConnect();
-    console.log("✓ MongoDB connection ready");
+    console.log("MongoDB Connected Successfully");
   } catch (err) {
-    console.error("⚠ فشل الاتصال بـ MongoDB:", err.message);
-    console.error("⚠ تحقق من:");
-    console.error("  1. MONGODB_URI موجود في .env أو Vercel environment variables");
-    console.error("  2. MongoDB Atlas cluster يعمل");
-    console.error("  3. Network Access في MongoDB Atlas يسمح لـ IP الخاص بك");
-    console.error("     → اذهب إلى Network Access → Add IP Address → 0.0.0.0/0 (للاختبار)");
-    console.error("  4. Database User credentials صحيحة في MONGODB_URI");
-    console.error("  5. Connection string format صحيح");
-    // Don't exit - let the server run and retry on first request
-    console.error("⚠ السيرفر سيعمل لكن قد تفشل الطلبات التي تحتاج قاعدة البيانات");
+    console.error("MongoDB Connection Failed:", err.message);
   }
 })();
 
+// === Site Settings Middleware ===
 app.use(async (req, res, next) => {
   try {
     const SiteSettings = require("./models/settings.model");
     let settings = await SiteSettings.getSettings();
     
-    // تحديث العنوان والأرقام إذا كانت قديمة
     if (!settings.address || settings.address.includes('الرياض') || settings.address.includes('الملقا')) {
       settings.address = "نجران رجلاء حي فواز";
-      await SiteSettings.findOneAndUpdate({}, { address: "نجران رجلاء حي فواز" }, { upsert: true });
+      await SiteSettings.findOneAndUpdate({}, { address: settings.address }, { upsert: true });
     }
-    
-    // تحديث الأرقام إذا كانت قديمة
     if (!settings.phones || settings.phones.length === 0 || settings.phones[0].includes('966501234567')) {
       settings.phones = ["0503119104", "0560864811"];
-      await SiteSettings.findOneAndUpdate({}, { phones: ["0503119104", "0560864811"] }, { upsert: true });
+      await SiteSettings.findOneAndUpdate({}, { phones: settings.phones }, { upsert: true });
     }
     
     res.locals.settings = settings;
@@ -141,8 +112,7 @@ app.use(async (req, res, next) => {
       siteName: "مؤسسة رقية اليامي",
       phones: ["0503119104", "0560864811"],
       address: "نجران رجلاء حي فواز",
-      email: "info@roqaya-alyami.sa",
-      social: {},
+      email: "info@roqaya-alyami.sa"
     };
   }
   next();
@@ -426,10 +396,13 @@ app.delete("/admin/api/news/:id", async (req, res) => {
   }
 });
 
-// Run server only when executed directly (local development)
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 3003;
+  app.listen(PORT, () => {
+    console.log(`Local server running at http://localhost:${PORT}`);
+    console.log(`Admin: http://localhost:${PORT}/admin/login`);
+  });
+}
 
-
+// === Export for Vercel (مهم جدًا) ===
 module.exports = app;
