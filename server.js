@@ -278,7 +278,7 @@ app.get("/api/news/:id", async (req, res) => {
   }
 });
 
-app.use("/api/", require("./api/projects"));
+app.use("/api/", require("./api/admin-projects.routes"));
 
 app.get("/admin/login", (req, res) => {
   res.render("login");
