@@ -405,4 +405,4 @@ if (require.main === module) {
 }
 
 // === Export for Vercel (مهم جدًا) ===
-module.exports = app;
+module.exports = ;
