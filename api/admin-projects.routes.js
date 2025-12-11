@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Project = require("../../models/projects.model");
+const Project = require("../models/projects.m");
 
 // جلب كل المشاريع (للصفحة الرئيسية)
 router.get("/projects", async (req, res) => {
