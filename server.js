@@ -43,7 +43,7 @@ const upload = multer({ storage });
 const dbConnect = require("./models/DB");
 const mongoose = require("mongoose");
 const User = require("./models/user");
-const Project = require("./models/projects.model");
+const Project = require("./models/projects.m");
 const News = require("./models/news.model");
 
 const app = express();
