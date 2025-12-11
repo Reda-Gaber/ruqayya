@@ -427,15 +427,9 @@ app.delete("/admin/api/news/:id", async (req, res) => {
 });
 
 // Run server only when executed directly (local development)
-if (require.main === module) {
-  const PORT = process.env.PORT || 3003;
-  app.listen(PORT, () => {
-    console.log(`Server running → http://localhost:${PORT}`);
-    console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
-    console.log(`All Projects → http://localhost:${PORT}/projects`);
-    console.log(`News → http://localhost:${PORT}/news`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
-// Export for Vercel serverless
+
 module.exports = app;

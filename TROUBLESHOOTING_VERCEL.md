@@ -130,3 +130,4 @@ npm start
 2. راجع Function Logs في Vercel Dashboard
 3. تأكد من أن جميع المتغيرات موجودة وصحيحة
 
+
