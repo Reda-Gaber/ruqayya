@@ -372,13 +372,12 @@ app.delete("/admin/api/news/:id", async (req, res) => {
 });
 
 // Export app for serverless compatibility
-if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running → http://localhost:${PORT}`);
     console.log(`Admin Login → http://localhost:${PORT}/admin/login`);
     console.log(`Construction Page → http://localhost:${PORT}/construction`);
     console.log(`All Projects → http://localhost:${PORT}/projects`);
   });
-}
 
-module.exports = app;
+
+// module.exports = app;
