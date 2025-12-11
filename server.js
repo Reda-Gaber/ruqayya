@@ -278,7 +278,7 @@ app.get("/api/news/:id", async (req, res) => {
   }
 });
 
-app.use("/api/", require("./routes/api/projects"));
+app.use("/api/", require("./api/projects"));
 
 app.get("/admin/login", (req, res) => {
   res.render("login");
@@ -334,7 +334,7 @@ app.get("/interior", async (req, res) => {
 
 app.use("/admin", requireAuth);
 
-app.use("/admin", require("./routes/projects.route"));
+app.use("/admin", require("./api/projects.route"));
 
 app.get("/admin/logout", requireAuth, (req, res) => {
   req.session.destroy(() => {
@@ -357,7 +357,7 @@ app.get("/create-admin", async (req, res) => {
 });
 
 app.use("/admin/api/employees", require("./routes/employee.route"));
-app.use("/api/settings", require("./routes/api/settings.route"));
+app.use("/api/settings", require("./api/settings.route"));
 
 app.get("/admin/api/news", async (req, res) => {
   try {
